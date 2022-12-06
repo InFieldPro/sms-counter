@@ -9,7 +9,7 @@ defmodule SmsPartCounter do
       "^{}\\[~]|€"
 
   @gsm_7bit_char_set MapSet.new(String.codepoints(gsm_7bit_ext_chars))
-  @gsm_7but_char_set_with_smart_encoding MapSet.new(String.codepoints(smart_encodable_chars <> gsm_7bit_ext_chars))
+  @gsm_7bit_char_set_with_smart_encoding MapSet.new(String.codepoints(smart_encodable_chars <> gsm_7bit_ext_chars))
   @gsm_single_length 160
   @gsm_multi_length 153
   @unicode_single_length 70
@@ -96,7 +96,7 @@ defmodule SmsPartCounter do
     sms_char_set = MapSet.new(String.codepoints(sms))
     smart_encoding_enabled = Map.get(opts, :smart_encoding, true)
 
-    comparison_charset = if smart_encoding_enabled, do: @gsm_7but_char_set_with_smart_encoding, else: @gsm_7bit_char_set
+    comparison_charset = if smart_encoding_enabled, do: @gsm_7bit_char_set_with_smart_encoding, else: @gsm_7bit_char_set
 
     diff = MapSet.difference(sms_char_set, comparison_charset)
 
