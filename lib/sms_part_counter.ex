@@ -28,7 +28,8 @@ defmodule SmsPartCounter do
   """
   @spec count(binary) :: integer()
   def count(str) when is_binary(str) do
-    String.codepoints(str)
+    str
+    |> String.codepoints()
     |> Enum.count()
   end
 
@@ -63,8 +64,10 @@ defmodule SmsPartCounter do
 
   """
   @spec unicode_part_count(binary) :: integer()
-  def unicode_part_count(sms) when is_binary(sms) do
-    sms_char_count = count(sms)
+  def unicode_part_count(sms, opts \\ %{}) when is_binary(sms) do
+    smart_encoding_enabled = Map.get(opts, :smart_encoding, true)
+    comparison_charset = get_comparison_charset(smart_encoding_enabled)
+    sms_char_count = unicode_character_count(sms, comparison_charset)
     part_count(sms_char_count, @unicode_single_length, @unicode_multi_length)
   end
 
@@ -77,6 +80,26 @@ defmodule SmsPartCounter do
         div(sms_char_count, multi_count) +
           if rem(sms_char_count, multi_count) == 0, do: 0, else: 1
     end
+  end
+
+  # UTF-2 characters outside of the "comparison_charset" argument count as 2 characters
+  # when calculating segments
+  defp unicode_character_count(sms_char_set, comparison_charset) do
+    sms_char_set
+    |> String.split("")
+    |> Enum.slice(1..-1)
+    |> Enum.reduce(0, fn substr, acc ->
+      count = substr |> String.codepoints() |> Enum.count()
+      substr_mapset = MapSet.new(String.codepoints(substr))
+      (empty_map_set?(MapSet.difference(substr_mapset, comparison_charset)) || count > 1)
+      |> case do
+        true ->
+          acc + count
+
+        false ->
+          acc + 2
+        end
+    end)
   end
 
   @doc """
@@ -140,8 +163,11 @@ defmodule SmsPartCounter do
 
   """
   @spec count_parts(binary) :: %{String.t() => String.t(), String.t() => integer()}
-  def count_parts(sms) when is_binary(sms) do
-    {:ok, encoding} = detect_encoding(sms)
+  def count_parts(sms, opts \\ %{}) when is_binary(sms) do
+    {:ok, encoding} = detect_encoding(sms, opts)
+
+    smart_encoding_enabled = Map.get(opts, :smart_encoding, true)
+    comparison_charset = get_comparison_charset(smart_encoding_enabled)
 
     case encoding do
       "gsm_7bit" ->
@@ -153,12 +179,16 @@ defmodule SmsPartCounter do
         }
 
       "unicode" ->
-        parts = unicode_part_count(sms)
+        parts = unicode_part_count(sms, opts)
 
         %{
           "encoding" => encoding,
           "parts" => parts
         }
     end
+  end
+
+  defp get_comparison_charset(smart_encoding_enabled) do
+    if smart_encoding_enabled, do: @gsm_7bit_char_set_with_smart_encoding, else: @gsm_7bit_char_set
   end
 end

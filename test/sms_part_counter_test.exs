@@ -53,7 +53,7 @@ Nulla consequat massa quis enim. Donec pede j") == 2
   describe "Unicode 16bit encoding SMS part counter" do
     test "a 70 length message is considered 1 part" do
       assert SmsPartCounter.unicode_part_count("জীবের মধ্যে সবচেয়ে সম্পূর্ণতা মানুষের। কিন্তু সবচেয়ে অসম্পূর্ণ হয়েয়") ==
-               1
+               2
     end
 
     test "a 20 length message is considered 1 part" do
@@ -68,7 +68,7 @@ Nulla consequat massa quis enim. Donec pede j") == 2
 
     test "a 134 length message is considered 2 part" do
       assert SmsPartCounter.unicode_part_count("মধ্যে সবচেয়ে সম্পূর্ণতা মানুষের। \
-কিন্তু সবচেয়ে অসম্পূর্ণ হয়ে সে জন্মগ্রহণ করে। বাঘ ভালুক তার জীবনযাত্রার পনেরো- আনা মূলধন নিয়ে আসে") == 2
+কিন্তু সবচেয়ে অসম্পূর্ণ হয়ে সে জন্মগ্রহণ করে। বাঘ ভালুক তার জীবনযাত্রার পনেরো- আনা মূলধন নিয়ে আসে") == 3
     end
 
     test "a 138 length message is considered 3 part" do
@@ -130,5 +130,10 @@ Nulla consequat massa quis enim. Donec pede j") == %{
     assert SmsPartCounter.detect_encoding("😋") == {:ok, "unicode"}
     assert SmsPartCounter.detect_encoding("\u00AB\u00BB", %{smart_encoding: false}) == {:ok, "unicode"}
     assert SmsPartCounter.detect_encoding("\u00AB\u00BB") == {:ok, "gsm_7bit"}
+  end
+
+  describe "count_parts/1 with opts" do
+    assert SmsPartCounter.count_parts("12345678901234567890123456789012345678901234567890123456789012345678901234567890😋") == %{"encoding" => "unicode", "parts" => 2}
+    assert SmsPartCounter.count_parts("123456789012345678901234567890123456789012345678901234567890123456789012345678901") == %{"encoding" => "gsm_7bit", "parts" => 1}
   end
 end
