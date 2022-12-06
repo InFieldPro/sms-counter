@@ -116,6 +116,7 @@ Nulla consequat massa quis enim. Donec pede j") == %{
              }
     end
 
+
     test "can detect Unicode 16 bit encoding and count parts" do
       assert SmsPartCounter.count_parts("জীবের মধ্যে সবচেয়ে সম্পূর্ণতা মানুষের। \
 কিন্তু সবচেয়ে অসম্পূর্ণ হয়ে সে জন্মগ্রহণ করে। বাঘ ভালুক তার \
@@ -124,5 +125,11 @@ Nulla consequat massa quis enim. Donec pede j") == %{
                "parts" => 3
              }
     end
+  end
+
+  describe "detect_encoding/1 with opts" do
+    assert SmsPartCounter.detect_encoding("😋") == {:ok, "unicode"}
+    assert SmsPartCounter.detect_encoding("\u00AB\u00BB", %{smart_encoding: false}) == {:ok, "unicode"}
+    assert SmsPartCounter.detect_encoding("\u00AB\u00BB") == {:ok, "gsm_7bit"}
   end
 end
