@@ -125,4 +125,10 @@ Nulla consequat massa quis enim. Donec pede j") == %{
              }
     end
   end
+
+  describe "detect_encoding/1 with opts" do
+    assert SmsPartCounter.detect_encoding("😋") == {:ok, "unicode"}
+    assert SmsPartCounter.detect_encoding("\u00AB\u00BB", %{smart_encoding: false}) == {:ok, "unicode"}
+    assert SmsPartCounter.detect_encoding("\u00AB\u00BB") == {:ok, "gsm_7bit"}
+  end
 end

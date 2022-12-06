@@ -5,7 +5,7 @@ defmodule SmsPartCounter.MixProject do
     [
       app: :sms_part_counter,
       version: "0.1.6",
-      elixir: "~> 1.13",
+      elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       description: description(),
