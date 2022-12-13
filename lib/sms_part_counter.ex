@@ -126,16 +126,16 @@ defmodule SmsPartCounter do
   as a map of the following format:
 
       %{
-        "encoding" => encoding,
-        "parts" => part count
+        encoding: encoding,
+        parts: part count
       }
 
   ## Examples
 
       iex> SmsPartCounter.count_parts("abc")
       %{
-        "encoding" => "gsm_7bit",
-        "parts" => 1
+        encoding: "gsm_7bit",
+        parts: 1
       }
 
   """
@@ -148,16 +148,16 @@ defmodule SmsPartCounter do
         parts = gsm_part_count(sms)
 
         %{
-          "encoding" => encoding,
-          "parts" => parts
+          encoding: encoding,
+          parts: parts
         }
 
       "unicode" ->
         parts = unicode_part_count(sms)
 
         %{
-          "encoding" => encoding,
-          "parts" => parts
+          encoding: encoding,
+          parts: parts
         }
     end
   end
