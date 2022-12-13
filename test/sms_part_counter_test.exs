@@ -111,8 +111,8 @@ Aenean massa. Cum sociis natoque penatibus et magnis dis \
 parturient montes, nascetur ridiculus mus. Donec quam felis, \
 ultricies nec, pellentesque eu, pretium quis, sem. \
 Nulla consequat massa quis enim. Donec pede j") == %{
-               "encoding" => "gsm_7bit",
-               "parts" => 2
+               encoding: "gsm_7bit",
+               parts: 2
              }
     end
 
@@ -120,8 +120,8 @@ Nulla consequat massa quis enim. Donec pede j") == %{
       assert SmsPartCounter.count_parts("জীবের মধ্যে সবচেয়ে সম্পূর্ণতা মানুষের। \
 কিন্তু সবচেয়ে অসম্পূর্ণ হয়ে সে জন্মগ্রহণ করে। বাঘ ভালুক তার \
 জীবনযাত্রার পনেরো- আনা মূলধন নিয়ে আসে প্রকৃতির মালখানা থেকে") == %{
-               "encoding" => "unicode",
-               "parts" => 3
+               encoding: "unicode",
+               parts: 3
              }
     end
   end
