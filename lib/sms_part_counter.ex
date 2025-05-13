@@ -140,8 +140,9 @@ defmodule SmsPartCounter do
 
   """
   @spec count_parts(binary) :: %{String.t() => String.t(), String.t() => integer()}
-  def count_parts(sms) when is_binary(sms) do
-    {:ok, encoding} = detect_encoding(sms)
+  def count_parts(sms, opts \\ %{}) when is_binary(sms) do
+    smart_encoding_enabled = Map.get(opts, :smart_encoding, true)
+    {:ok, encoding} = detect_encoding(sms, smart_encoding_enabled: smart_encoding_enabled)
 
     case encoding do
       "gsm_7bit" ->
