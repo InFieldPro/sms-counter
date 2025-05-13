@@ -91,7 +91,7 @@ defmodule SmsPartCounter do
       {:ok, "unicode"}
 
   """
-  @spec detect_encoding(binary) :: {:ok | :error, String.t()}
+  @spec detect_encoding(binary, map() | nil) :: {:ok | :error, String.t()}
   def detect_encoding(sms, opts \\ %{}) when is_binary(sms) do
     sms_char_set = MapSet.new(String.codepoints(sms))
     smart_encoding_enabled = Map.get(opts, :smart_encoding, true)
