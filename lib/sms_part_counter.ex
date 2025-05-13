@@ -91,10 +91,10 @@ defmodule SmsPartCounter do
       {:ok, "unicode"}
 
   """
-  @spec detect_encoding(binary, map() | nil) :: {:ok | :error, String.t()}
-  def detect_encoding(sms, opts \\ %{}) when is_binary(sms) do
+  @spec detect_encoding(binary, keyword() | nil) :: {:ok | :error, String.t()}
+  def detect_encoding(sms, opts \\ []) when is_binary(sms) do
     sms_char_set = MapSet.new(String.codepoints(sms))
-    smart_encoding_enabled = Map.get(opts, :smart_encoding, true)
+    smart_encoding_enabled = Keyword.get(opts, :smart_encoding, true)
 
     comparison_charset = if smart_encoding_enabled, do: @gsm_7bit_char_set_with_smart_encoding, else: @gsm_7bit_char_set
 
@@ -139,9 +139,9 @@ defmodule SmsPartCounter do
       }
 
   """
-  @spec count_parts(binary, map() | nil) :: %{String.t() => String.t(), String.t() => integer()}
-  def count_parts(sms, opts \\ %{}) when is_binary(sms) do
-    smart_encoding_enabled = Map.get(opts, :smart_encoding, true)
+  @spec count_parts(binary, keyword() | nil) :: %{String.t() => String.t(), String.t() => integer()}
+  def count_parts(sms, opts \\ []) when is_binary(sms) do
+    smart_encoding_enabled = Keyword.get(opts, :smart_encoding, true)
     {:ok, encoding} = detect_encoding(sms, smart_encoding: smart_encoding_enabled)
 
     case encoding do
